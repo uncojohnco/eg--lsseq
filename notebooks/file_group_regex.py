@@ -81,6 +81,7 @@ seqs = defaultdict(set)
 
 for fp in files:
     groups = get_file_group_key(fp)
-    # key = (basename, ext)
+    key = '{basename}-{ext}'.format(**groups)
+    seqs[key].add(groups['frames'])
 
 display(seqs)
