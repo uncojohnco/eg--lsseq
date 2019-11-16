@@ -19,11 +19,11 @@ class FileData:
 
 class Fileobj:
 
-    _fileData: FileData
+    _filedata: FileData
 
     def __init__(self, file_data: FileData):
 
-        self._fileData = _fd = file_data
+        self._filedata = _fd = file_data
 
         self._file_path = os.path.join(_fd.dir, _fd.basename)
 
@@ -33,15 +33,15 @@ class Fileobj:
     
     @property
     def dir(self) -> str:
-        return self._fileData.dir
+        return self._filedata.dir
 
     @property
     def basename(self) -> str:
-        return self._fileData.basename
+        return self._filedata.basename
 
     @property
     def extension(self) -> str:
-        return self._fileData.extension
+        return self._filedata.extension
 
     def __len__(self) -> int:
         """
@@ -73,41 +73,9 @@ class FileSequence(Fileobj):
 
         self._setup_frames()
 
+    # TODO: ...
     def _setup_frames(self):
-        """
-
-        :return:
-        """
-
-        for fp in  self._file_paths:
-
-
-
-
-        
-        frames = self._frames
-        
-        # if it's inherently disordered, sort and build
-        if isinstance(frames =, Set):
-            items = frozenset(map(int, frames))
-            order = tuple(sorted(self._items))
-            frange = FrameSet.framesToFrameRange(
-                self._order, sort=False, compress=False)
-            return
-
-        # if it's ordered, find unique and build
-        elif isinstance(frange, Sequence):
-            items = set()
-            order = unique(items, map(int, frange))
-            order = tuple(order)
-        items = frozenset(items)
-            frange = FrameSet.framesToFrameRange(
-                self._order, sort=False, compress=False)
-            return
-
-            self._items = items
-            self._order = tuple(sorted(self._items))
-            self._frange = FrameSet.framesToFrameRange()
+        pass
 
     @property
     def frames(self) -> frozenset[int]:
