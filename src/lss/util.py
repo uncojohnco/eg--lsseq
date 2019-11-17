@@ -1,5 +1,6 @@
 import logging
-from typing import List
+from typing import Dict, List, Tuple
+from dataclasses import dataclass
 
 from lss.const import DIGITS_RE
 
@@ -7,12 +8,19 @@ from lss.const import DIGITS_RE
 log = logging.getLogger(__name__)
 
 
-def diff_sequence(name1: str, name2: str, strict=True) -> List:
+@dataclass
+class SeqMatch:
+    start: int
+    end: int
+    frames: Tuple
+
+
+def diff_sequence(name1: str, name2: str, strict=True) -> List[SeqMatch]:
 
     log.debug(f'diff: "{name1} {name2}')
 
-    matches1 = [m for m in DIGITS_RE.finditer(name1)]
-    matches2 = [m for m in DIGITS_RE.finditer(name2)]
+    matches1 = list(DIGITS_RE.finditer(name1))
+    matches2 = list(DIGITS_RE.finditer(name2))
 
     # Bail early as the two items are different
     if not len(matches1) == len(matches2):
@@ -43,11 +51,10 @@ def diff_sequence(name1: str, name2: str, strict=True) -> List:
         if strict is True and len(group1) != len(group2):
             continue
 
-        data = {
-            'start': start1,
-            'end': match1.end(),
-            'frames': (group1, group2)
-        }
-        diff_result.append(data)
+        seq_match = SeqMatch(
+            start=start1, end=match1.end(),
+            frames=(group1, group2)
+        )
+        diff_result.append(seq_match)
 
     return diff_result
