@@ -4,49 +4,67 @@
 from __future__ import annotations
 
 import os
+import logging
 
-from typing import List, Union
+from typing import List, Match, Tuple, Union
+from dataclasses import dataclass
 
 from lss.const import DIGITS_RE
 import lss.util
 
 
+log = logging.getLogger(__name__)
+
+
+@dataclass
+class SeqMatch:
+    start: int
+    end: int
+    frames: Tuple
+
+
 class Item:
 
-    def __init__(self, item):
+    def __init__(self, item: str):
 
         self._item = item
-        self._path = os.path.abspath(str(item))
 
-        self._dirname, self._filename = os.path.split(self._path)
+        self._str_digits = DIGITS_RE.findall(self.name)
+        self._str_parts = DIGITS_RE.split(self.name)
 
-        self._digits = DIGITS_RE.findall(self.name)
-        self._parts = DIGITS_RE.split(self.name)
+    def diff_sequence(self, item: Item) -> Union[SeqMatch,None]:
 
-    def is_sibling(self, item: Union[str, Item]) -> bool:
+        if self.str_parts != item.str_parts:
+            return None
 
-        if not isinstance(item, Item):
-            item = Item(item)
+        if len(self.str_digits) != len(item.str_digits):
+            return None
 
-        if self._parts != item._parts:
-            return False
+        name1, name2 = self.name, item.name
 
-        diff_result = lss.util.diff_sequence(self.name, item.name)
-        is_sibling = len(diff_result) == 1
+        seqmatch = lss.util.diff_sequence(name1, name2)
 
-        return is_sibling
+        return seqmatch
+
+    def is_sibling(self, item: Item) -> bool:
+
+        diff_result = self.diff_sequence(item)
+        if diff_result:
+            return True
+
+        return False
 
     @property
     def name(self) -> str:
-        return self._filename
+        return self._item
 
     @property
-    def parts(self) -> List[str]:
-        return self._parts
+    def str_parts(self) -> List[str]:
+        return self._str_parts
 
     @property
-    def digits(self) -> List[int]:
-        return self._digits
+    def str_digits(self) -> List[str]:
+        return self._str_digits
 
     def __str__(self):
         return str(self.name)
@@ -54,3 +72,29 @@ class Item:
     def __repr__(self):
         n = self.name
         return f'<lss.Item "{n}">'
+
+
+class FileItem(Item):
+
+    def __init__(self, filepath: str):
+
+        # assumed the path has already been expanded...
+        self._path = filepath
+        self._dirname, self._filename = os.path.split(self._path)
+
+        super(FileItem, self).__init__(self._filename)
+
+    def is_sibling(self, item: FileItem) -> bool:
+
+        if self._dirname != item._dirname:
+            return False
+
+        return super(FileItem, self).is_sibling(item)
+
+    @property
+    def dirname(self) -> str:
+        return self._dirname
+
+    def __repr__(self):
+        n = self.name
+        return f'<lss.FileItem "{n}">'
