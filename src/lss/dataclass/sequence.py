@@ -1,32 +1,72 @@
 
-from typing import List
+import logging
 
-from lss.dataclass.item import Item
-import lss.util
+from typing import List, Set
 
-
-def sibling_frames(item1: Item, item2: Item):
-
-    if item1.parts != item2.parts:
-        return []
-
-    diff_result = lss.util.diff_sequence(item1.name, item2.name)
-
-    return diff_result
+from lss.dataclass.item import Item, FileItem
 
 
-class Sequence:
+log = logging.getLogger(__name__)
 
+
+class SequenceCollector:
+
+    _item_pri: Item
+    _items: List[Item]
+    _frames: Set[int]
+    _pad: int
+
+    # For now we initialise a Sequence from a single item and
+    # append more items using the append method...
     def __init__(self, item: Item):
 
-        self._items = []
+        self._item_pri = item
+        self._items = [item]
+
+        self._frames = set() # TODO: change to frozenset
+
+    def can_include(self, item: Item) -> bool:
+
+        diff_result = self._item_pri.diff_sequence(item)
+        if not diff_result:
+            return False
+
+        frame = diff_result.frames[1]
+
+        # Dont include if the matched frame of the other item
+        # already exists in this sequence frame set.
+        if frame in self._frames:
+            return False
+
+        return True
+
+    def append(self, item: Item):
+
         self._items.append(item)
 
-        self._parts = item.parts
+        d = self._item_pri.diff_sequence(item)
+        log.debug(f'{item} - {d}')
 
-    def includes(self, item: Item):
-        return self._items[-1].is_sibling(item)
+        if not self._frames:
+            self._frames.add(d.frames[0])
+
+        self._frames.add(d.frames[1])
+
+    # def __str__(self):
+    #     pass
 
     @property
-    def parts(self) -> List[str]:
-        return self._parts
+    def items(self):
+        return self._items
+
+
+class FileSequence:
+
+    _item: FileItem
+    _items: List[FileItem]
+
+    def __init__(self, fileitem: FileItem):
+
+        super(FileSequence, self).__init__(fileitem)
+
+        self._dirname = self._item.dirname
