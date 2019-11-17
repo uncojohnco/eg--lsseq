@@ -1,5 +1,6 @@
 import logging
-from typing import Dict, List, Tuple
+
+from typing import Tuple, Union
 from dataclasses import dataclass
 
 from lss.const import DIGITS_RE
@@ -15,46 +16,70 @@ class SeqMatch:
     frames: Tuple
 
 
-def diff_sequence(name1: str, name2: str, strict=True) -> List[SeqMatch]:
+def diff_sequence(str1: str, str2: str, strict=True) -> Union[SeqMatch,None]:
+    """Diff between str1 and str2 to to resolve the frame representation
+    of each string.
 
-    log.debug(f'diff: "{name1} {name2}')
+    Example:
+        >>> diff_sequence('file01_0040.rgb', 'file01_0041.rgb')
+        SeqMatch(start=7, end=11, frames=('0040', '0041'))
 
-    matches1 = list(DIGITS_RE.finditer(name1))
-    matches2 = list(DIGITS_RE.finditer(name2))
+        >>> diff_sequence('file1.03.rgb', 'file2.03.rgb')
+        SeqMatch(start=4, end=5, frames=('1', '2'))
 
-    # Bail early as the two items are different
-    if not len(matches1) == len(matches2):
-        return []
+        >>> diff_sequence('file02_0040.rgb', 'file01_0041.rgb')
 
-    # The diff result
+
+    :param str1: The string object for comparison against.
+    :param str2: The string to compare to the object string.
+    :param strict: If True, the length of the digit padding
+                    must be the same when comparing
+
+    :return: List of SeqMatch
+
+    """
+
+    log.debug(f'diff: "{str1} {str2}')
+
+    matches1 = list(DIGITS_RE.finditer(str1))
+    matches2 = list(DIGITS_RE.finditer(str2))
+
+    if len(matches1) != len(matches2):
+        return None
+
     diff_result = []
 
-    # Iterate through each items digit match.
-    for match1, match2 in zip(matches1, matches2):
+    # Iterate through ordered pairs of digits found in each name
+    for m1, m2 in zip(matches1, matches2):
 
-        start1, start = match1.start(), match2.start()
-        group1, group2 = match1.group(), match2.group()
+        digit_str1, digit_str2 = m1.group(), m2.group()
+        start1, start2 = m1.start(), m2.start()
 
-        # The items cannot be the same if...
-
-        # If the matches don't have the same start position
-        if start1 != start:
+        # Skip if the pair of matching "digit strings" are equal,
+        # hence this pair cant be representative of frame sequence
+        if digit_str1 == digit_str2:
             continue
 
-        # If the match groups are equal, i.e if we are matching the 1st digit match found in
-        # "file01_0040.rgb" and "file01_0041.rgb", we should ignore these as this digit match
-        # represent a part of the name and not a frame!
-        if group1 == group2:
+        # Ignore if the matches don't have the same start position
+        if start1 != start2:
             continue
 
-        # If strict is True, The length of the padding must be the same!
-        if strict is True and len(group1) != len(group2):
+        # If strict is True, the length of the padding must be the same!
+        if strict is True and len(digit_str1) != len(digit_str2):
             continue
 
+        # If we get to this point - we have found a digit string part
+        # representing a sequence
         seq_match = SeqMatch(
-            start=start1, end=match1.end(),
-            frames=(group1, group2)
+            start=m1.start(), end=m1.end(),
+            frames=(digit_str1, digit_str2)
         )
         diff_result.append(seq_match)
 
-    return diff_result
+    # if more than one set of matches has been found
+    if not diff_result or len(diff_result) > 1:
+        return None
+
+    log.debug(r'diff_result: {diff_result}')
+
+    return diff_result[0]
