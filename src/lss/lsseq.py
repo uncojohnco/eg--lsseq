@@ -134,16 +134,16 @@ def run(dir_path):
         >>> targetdir = os.path.dirname(__file__)
         >>> os.chdir(targetdir)
 
-        >>> run('../../tests/files/simple1')
+        >>> print(run('../../tests/files/simple1'))
         5 file01_%04d.rgb 40-42 44-45
 
-        >>> run('../../tests/files/ex1')
+        >>> print(run('../../tests/files/ex1'))
         1 elem.info
         46 sd_fx29.%04d.rgb 101-121 123-147
         1 strange.xml
 
         # TODO: this test is failing...
-        >>> run('../../tests/files/broken_seq')
+        >>> print(run('../../tests/files/broken_seq'))
         5 file01_%04d.rgb 40-42 44-45
         5 file02_%d.rgb 0-4
         4 file%d.03.rgb 1-4
