@@ -37,7 +37,7 @@ def build_sequences_form1(file_items: Iterator[FileItem]) -> List[FileSequenceBu
     return sequences_f1
 
 
-def get_sequences(file_paths: Iterable[str]):
+def get_sequences(file_paths: Iterable[str]) -> List[FileSequence]:
     """
     Process a list of filenames to be collected into their
 
@@ -70,10 +70,25 @@ def get_sequences(file_paths: Iterable[str]):
     return sequences
 
 
+# TODO: add commandline formatter
+def format_sequence(seq: FileSequence) -> str:
+
+    count = len(seq.frames)
+    s = seq.str_parts
+    bn = f'{s.prefix}{s.printf}{s.suffix}'
+
+    # TODO: implement compact frame format
+    comp_frames = seq.frames
+
+    return f'{count} {bn} {comp_frames}'
+
+
 def run(dir_path):
 
     """
-    >>> run('../../tests/files/simple1')
+    Examples:
+        >>> run('../../tests/files/simple1')
+        5 file01_%04d.rgb 40-42, 44, 45
 
     :param dir_path:
     :return:
@@ -85,4 +100,9 @@ def run(dir_path):
 
     filenames = map(str, path.iterdir())
 
-    get_sequences(filenames)
+    sequences = get_sequences(filenames)
+
+    for seq in sequences:
+
+        output = format_sequence(seq)
+        print(output)
