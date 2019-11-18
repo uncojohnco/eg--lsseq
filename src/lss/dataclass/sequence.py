@@ -37,7 +37,7 @@ class SequenceStrParts:
     prefix: str
     suffix: str
 
-    pad_len: int
+    pad_len: int = 0
     pad_char:  str = '#'
 
     @property
