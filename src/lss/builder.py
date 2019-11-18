@@ -59,18 +59,6 @@ def find_matching_frame_substrings(
     return substr_match
 
 
-def create_seq_str_parts(basename, base_frame, frame_pos):
-
-    pos1, pos2 = frame_pos.start, frame_pos.end
-
-    SequenceStrParts(
-        prefix=basename[:pos1],,
-        frame_pos=frame_pos,
-        suffix=basename[pos2:],
-        pad=len(base_frame)
-    )
-
-
 class SequenceBuilder:
     """
     Class to handle the collection of sequential sequence of items.
@@ -120,9 +108,18 @@ class SequenceBuilder:
         """
         """
 
+        basename = self._base.name
         base_frame = substr_match.groups[0]
 
-        self._seq_str_parts = create_seq_str_parts(self._base.name, base_frame, substr_match, )
+        frame_pos = substr_match.pos
+
+        pos1, pos2 = frame_pos.start, frame_pos.end
+
+        self._seq_str_parts = SequenceStrParts(
+            prefix=basename[:pos1],
+            suffix=basename[pos2:],
+            pad_len=len(base_frame)
+        )
 
         self._frames.add(int(base_frame))
 
