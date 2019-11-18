@@ -15,6 +15,7 @@ class SubstrMatch:
     groups: Tuple[str, str]
 
 
+# TODO: Replace this behavior with pathlib.PurePath?
 @dataclass
 class Fileobj:
 
