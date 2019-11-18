@@ -62,3 +62,10 @@ class Sequence:
 
     str_parts: SequenceStrParts
     frames: Tuple[int]
+
+
+@dataclass
+class FileSequence(Sequence):
+
+    dirname: str
+    extension: str
