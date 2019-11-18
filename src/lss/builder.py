@@ -1,7 +1,7 @@
 
 import logging
 
-from typing import List, Optional, Set, Union
+from typing import List, Optional, Set, Union, Tuple
 
 import lss.util
 
@@ -68,31 +68,23 @@ class SequenceBuilder:
     >>> print(s.frames)
     {1, 2, 3}
     """
-    _is_sequence: bool
-
     _base: Item
     _items: List[Item]
 
-    _seq_str_parts: SequenceStrParts
+    _seq_str_parts: SequenceStrParts = None
+    _frames: Set[int] = set()
+    _is_sequence: bool = False
 
     def __init__(self, item: Item):
 
         self._base = item
         self._items = [item]
 
-        self._is_sequence = False
-
-        self._frames = set()
-
-        self._seq_str_parts = None
-
     def can_include(self, item: Item) -> bool:
         """
         Validate if the supplied item can be a part of this sequence.
 
         :param item: The item to compare against the base item
-
-        :return: bool
         """
 
         substr_match = find_matching_frame_substrings(self._base, item)
@@ -159,23 +151,28 @@ class SequenceBuilder:
     def items(self) -> List[Item]:
         """
         The items used in the creation of this sequence.
-        :return: List[Item]
         """
         return self._items
 
     @property
     def frames(self) -> Set[int]:
         """
-        The frames contained in this sequence
-        :return: List[int]
+        The frames contained in this sequence.
+        This is on ordered set for fast lookup
         """
         return self._frames
+
+    @property
+    def ordered(self) -> Tuple[int]:
+        """
+        The order representaion of frames
+        """
+        return tuple(sorted(self.frames))
 
     @property
     def seq_str_parts(self) -> SequenceStrParts:
         """
         # TODO:
-        :return:
         """
 
         return self._seq_str_parts
@@ -184,7 +181,6 @@ class SequenceBuilder:
     def is_sequence(self) -> bool:
         """
         # TODO:
-        :return:
         """
 
         return self._is_sequence
@@ -199,6 +195,7 @@ class FileSequenceBuilder(SequenceBuilder):
 
         super(FileSequenceBuilder, self).__init__(fileitem)
 
+        # TODO: Replace this behavior with pathlib.PurePath?
         self._fileobj = Fileobj(
             dirname=self._base.dirname,
             ext=self._base.ext
