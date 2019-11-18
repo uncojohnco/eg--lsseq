@@ -31,33 +31,10 @@ def build_sequences_form1(file_items: Iterator[FileItem]) -> List[SequenceBuilde
                 break
 
         if not found:
-            seq = self._builder(item)
+            seq = SequenceBuilder(item)
             sequences_f1.append(seq)
 
     return sequences_f1
-
-
-def build_seq(built_seq: SequenceBuilder) -> Sequence:
-    """
-    From a processed "1st form sequence", generate a concrete Sequence object.
-
-    :param built_seq: The conceptual representation of a sequence of frames.
-    """
-
-    ordered_frames = sorted(built_seq.frames)
-
-    seq = Sequence(
-        str_parts=built_seq.seq_str_parts,
-        frames=tuple(ordered_frames)
-    )
-
-    return seq
-
-
-def build_sequences(built_sequences: Iterator[SequenceBuilder]) -> Generator[Sequence, None, None]:
-
-    for b_seq in built_sequences:
-        yield build_seq(b_seq)
 
 
 def get_sequences(filenames: List[str]):
@@ -66,8 +43,7 @@ def get_sequences(filenames: List[str]):
 
     Examples:
         >>> files = ['f01.rgb', 'f02.rgb','f03.rgb',]
-        >>> d = Director()
-        >>> d.build(files)
+        >>> get_sequences(files)
 
     :param filenames:
     :return:
@@ -76,7 +52,18 @@ def get_sequences(filenames: List[str]):
     file_items = map(FileItem, filenames)
 
     sequences_f1 = build_sequences_form1(file_items)
-    sequences = build_sequences(sequences_f1)
+
+    sequences = []
+    for seq_f1 in sequences_f1:
+
+        ordered_frames = sorted(seq_f1.frames)
+
+        seq = Sequence(
+            str_parts=seq_f1.seq_str_parts,
+            frames=tuple(ordered_frames)
+        )
+
+        sequences.append(seq)
 
     return sequences
 
@@ -84,7 +71,7 @@ def get_sequences(filenames: List[str]):
 def run(dir_path):
 
     """
-    G
+    >>> run('./test-jc--dd-2019/tests/files/simple1')
 
     :param dir_path:
     :return:
