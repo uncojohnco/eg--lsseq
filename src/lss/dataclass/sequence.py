@@ -59,14 +59,31 @@ class SequenceStrParts:
             return f'%0{self.pad_len}d'
 
 
+# TODO: Sequence behavior should be split into separate class, however,
+# with dataclass inheritance would get `TypeError: non-default argument 'fileobj' follows default argument`
+# https://stackoverflow.com/questions/51575931/class-inheritance-in-python-3-7-dataclasses
+
+# TODO: should be able to instantiate this class with a string...
 @dataclass
-class Sequence:
+class FileSequence:
+    """
+    TODO:
+
+    Examples:
+        >>> str_parts = SequenceStrParts('prefix_', '_suffix.ext',  4)
+        >>> fo = Fileobj('root', '.ext')
+        >>> s = FileSequence(str_parts, fo, frames=(1, 2, 3))
+        >>> s.is_sequence
+        True
+        >>> s = FileSequence(str_parts, fo)
+        >>> s.is_sequence
+        False
+    """
 
     str_parts: SequenceStrParts
-    frames: Tuple[int]
+    fileobj: Fileobj  # TODO: Replace this behavior with pathlib.PurePath?
+    frames: Tuple[int, ...] = ()
 
-
-@dataclass
-class FileSequence(Sequence):
-
-    fileobj: Fileobj
+    @property
+    def is_sequence(self) -> bool:
+        return len(self.frames) > 1
