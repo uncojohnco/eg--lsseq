@@ -1,6 +1,6 @@
 import logging
 
-from typing import Optional
+from typing import Optional, Sequence
 
 from lss.const import DIGITS_RE
 from lss.dataclass.base import SubstrMatch, SubstrPos
@@ -81,3 +81,29 @@ def find_matching_frame_substrings(
     substr_match = diff_results[0]
 
     return substr_match
+
+
+# Stolen from https://github.com/mohsen3/lss
+# TODO: replace with own implementation!
+def compact_frame_range(frames: Sequence[int]):
+    """Converts a list of numbers into the compact representation of the numbers.
+    >>> compact_frame_range([1, 2, 3, 4])
+    '1-4'
+    >>> compact_frame_range([1, 2, 5, 3])
+    '1-3 5'
+    >>> compact_frame_range([1, 2, 5, 7, 8, 9])
+    '1-2 5 7-9'
+    """
+
+    nums = sorted(frames)
+
+    formatted = []
+    i = 0
+    while i < len(frames):
+        count = 0
+        while i + count < len(nums) and nums[i] + count == nums[i + count]:
+            count = count + 1
+        formatted.append(str(nums[i]) + ('' if count == 1 else '-' + str(nums[i] + count - 1)))
+        i = i + count
+
+    return ' '.join(formatted)
