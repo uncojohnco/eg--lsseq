@@ -1,43 +1,28 @@
 
-# [PEP 563 -- Postponed Evaluation of Annotations](https://python.org/dev/peps/pep-0563/)
-# https://stackoverflow.com/questions/33533148/how-do-i-specify-that-the-return-type-of-a-method-is-the-same-as-the-class-itsel
-from __future__ import annotations
 
 import os
 import logging
 
-from typing import List, Optional
+from typing import List
 
-
-import lss.util
-from lss.dataclass import SubstrMatch
 from lss.const import DIGITS_RE
-
 
 log = logging.getLogger(__name__)
 
 
 class Item:
+    """
+    A primitive class for defining an abstract representation of an item
+    with the purpose to be used  to find the substring representing
+    a frame against another item
+    """
 
     def __init__(self, item: str):
 
         self._item = item
 
-        self._str_digits = DIGITS_RE.findall(self.name)
-        self._str_parts = DIGITS_RE.split(self.name)
-
-    def diff_sequence(self, item: Item) -> Optional[SubstrMatch]:
-
-        if self.str_parts != item.str_parts:
-            return None
-
-        if len(self.str_digits) != len(item.str_digits):
-            return None
-
-        name1, name2 = self.name, item.name
-
-        substr_match = lss.util.find_matching_frame_substrings(name1, name2)
-        return substr_match
+        self._str_digits = DIGITS_RE.findall(item)
+        self._str_parts = DIGITS_RE.split(item)
 
     @property
     def name(self) -> str:
