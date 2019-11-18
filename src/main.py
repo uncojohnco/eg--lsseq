@@ -9,32 +9,28 @@ import lss.lsseq
 
 def main():
 
-    if len(sys.argv) == 1:
-        # Current dir if no arg is specified
-        arg = '.'
-    elif len(sys.argv) == 2:
-        arg = sys.argv[1]
-    else:
-        print('Usage:', __file__, '/path/to/dir')
-
     # TODO: implement optparse...
 
-    if arg == '--test':
-        # Test the module function using the inline example of the comments.
+    if len(sys.argv) == 1:
+        # Current dir if no arg is specified
+        dir_path = '.'
+    elif len(sys.argv) == 2:
+        dir_path = sys.argv[0]
+        # TODO: improve help...
+        if '--help' in sys.argv[1]:
+            print('Usage: lss /path/to/dir')
+            return
 
-        doctest.testmod()
-        print('Finished testing!')
-    else:
+        if '--test' in sys.argv[1]:
+            print('TODO: Implement flag to run doctest strings...')
+            return
 
-        arg = os.path.abspath(arg)
+        dir_path = os.path.abspath(dir_path)
 
-        if os.path.isdir(arg):
-            result = lss.lsseq.run(arg)
+        if os.path.isdir(dir_path):
+            result = lss.lsseq.run(dir_path)
             print(result)
         else:
-            print('Not a directory', arg)
-            sys.exit(1)
+            print('Not a directory', dir_path)
 
-
-if __name__ == '__main__':
-    sys.exit(main())
+sys.exit(main())

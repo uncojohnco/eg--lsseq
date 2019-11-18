@@ -1,5 +1,10 @@
-#!/usr/bin/env bash
+#!/usr/bin/env python3
 
-# echo dirname "$(realpath $0)"
+import os
+import runpy
 
-python3 `dirname "$(realpath $0)"`/src/main.py
+dirname = os.path.dirname(__file__)
+
+filepath = os.path.join(dirname, 'src/main.py')
+
+runpy.run_path(filepath)
