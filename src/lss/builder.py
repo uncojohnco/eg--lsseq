@@ -84,6 +84,8 @@ class SequenceBuilder:
 
         self._frames = set()
 
+        self._seq_str_parts = None
+
     def can_include(self, item: Item) -> bool:
         """
         Validate if the supplied item can be a part of this sequence.
@@ -178,22 +180,40 @@ class SequenceBuilder:
 
         return self._seq_str_parts
 
+    @property
+    def is_sequence(self) -> bool:
+        """
+        # TODO:
+        :return:
+        """
+
+        return self._is_sequence
+
 
 class FileSequenceBuilder(SequenceBuilder):
 
     _fileobj: Fileobj
     _base: FileItem
 
-    def _init_sequence(self, substr_match: SubstrMatch):
+    def __init__(self, fileitem: FileItem):
 
-        super(FileSequenceBuilder, self)._init_sequence(substr_match)
+        super(FileSequenceBuilder, self).__init__(fileitem)
 
-        # TODO: Implement PurePath but with the generic sequence filename
-        #  i.e file01_####.rgb
         self._fileobj = Fileobj(
             dirname=self._base.dirname,
             ext=self._base.ext
         )
+
+    # TODO: Implement PurePath but with the generic sequence filename
+    #  i.e file01_####.rgb
+    # def _init_sequence(self, substr_match: SubstrMatch):
+    #
+    #     super(FileSequenceBuilder, self)._init_sequence(substr_match)
+    #
+    #     self._fileobj = Fileobj(
+    #         dirname=self._base.dirname,
+    #         ext=self._base.ext
+    #     )
 
     @property
     def fileobj(self) -> Fileobj:

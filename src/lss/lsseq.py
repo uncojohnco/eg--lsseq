@@ -59,6 +59,10 @@ def get_sequences(file_paths: Iterable[str]) -> List[FileSequence]:
 
         ordered_frames = sorted(seq_f1.frames)
 
+        # TODO:
+        # if not seq_f1.is_sequence:
+        #   Handle single File ...
+
         seq = FileSequence(
             str_parts=seq_f1.seq_str_parts,
             frames=tuple(ordered_frames),
@@ -72,6 +76,8 @@ def get_sequences(file_paths: Iterable[str]) -> List[FileSequence]:
 
 # TODO: add commandline formatter
 def format_sequence(seq: FileSequence) -> str:
+
+    # TODO: Handle a sequence that is a single file!
 
     count = len(seq.frames)
     s = seq.str_parts
