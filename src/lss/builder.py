@@ -5,7 +5,8 @@ from typing import List, Optional, Set, Union
 
 import lss.util
 
-from lss import SubstrMatch, Item, FileItem, SequenceStrParts, Fileobj
+from lss import SubstrMatch, Item, FileItem, SequenceStrParts
+from lss.dataclass.base import Fileobj
 from lss.error import SequenceError
 
 
