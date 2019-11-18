@@ -9,9 +9,12 @@ import pathlib
 
 from lss.const import DIGITS_RE
 
+
 log = logging.getLogger(__name__)
 
-PurePath = pathlib.PurePath
+
+Path = pathlib.PurePath
+
 
 class Item:
     """
@@ -67,12 +70,12 @@ class FileItem(Item):
 
     dirname: str
     filename: str
-    path: pathlib.PurePath
+    path: Path
 
     def __init__(self, filepath: str):
 
         # assumed the path has already been expanded...
-        p_ = PurePath(str(filepath))
+        p_ = Path(str(filepath))
         self.dirname = str(p_.parent)
 
         self.filename = p_.name
