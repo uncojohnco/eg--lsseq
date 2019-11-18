@@ -6,21 +6,15 @@ from __future__ import annotations
 import os
 import logging
 
-from typing import List, Match, Tuple, Union
-from dataclasses import dataclass
+from typing import List, Optional
 
-from lss.const import DIGITS_RE
+
 import lss.util
+from lss.dataclass import SubstrMatch
+from lss.const import DIGITS_RE
 
 
 log = logging.getLogger(__name__)
-
-
-@dataclass
-class SeqMatch:
-    start: int
-    end: int
-    frames: Tuple
 
 
 class Item:
@@ -32,7 +26,7 @@ class Item:
         self._str_digits = DIGITS_RE.findall(self.name)
         self._str_parts = DIGITS_RE.split(self.name)
 
-    def diff_sequence(self, item: Item) -> Union[SeqMatch,None]:
+    def diff_sequence(self, item: Item) -> Optional[SubstrMatch]:
 
         if self.str_parts != item.str_parts:
             return None
@@ -42,17 +36,8 @@ class Item:
 
         name1, name2 = self.name, item.name
 
-        seqmatch = lss.util.diff_sequence(name1, name2)
-
-        return seqmatch
-
-    def is_sibling(self, item: Item) -> bool:
-
-        diff_result = self.diff_sequence(item)
-        if diff_result:
-            return True
-
-        return False
+        substr_match = lss.util.find_matching_frame_substrings(name1, name2)
+        return substr_match
 
     @property
     def name(self) -> str:
@@ -83,13 +68,6 @@ class FileItem(Item):
         self._dirname, self._filename = os.path.split(self._path)
 
         super(FileItem, self).__init__(self._filename)
-
-    def is_sibling(self, item: FileItem) -> bool:
-
-        if self._dirname != item._dirname:
-            return False
-
-        return super(FileItem, self).is_sibling(item)
 
     @property
     def dirname(self) -> str:
