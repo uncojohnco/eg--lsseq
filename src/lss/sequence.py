@@ -76,8 +76,6 @@ class SequenceBuilder:
     _frame_pos: SubstrPos
     _pad: int
 
-    # For now we initialise a Sequence from a single item.
-    # Append more items after instantiation
     def __init__(self, item: Item):
 
         self._base = item
