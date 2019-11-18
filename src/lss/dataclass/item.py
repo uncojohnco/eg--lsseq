@@ -12,9 +12,19 @@ log = logging.getLogger(__name__)
 
 class Item:
     """
-    A primitive class for defining an abstract representation of an item
-    with the purpose to be used  to find the substring representing
-    a frame against another item
+    A primitive class for defining an abstract representation of an item.
+
+    The purpose to be used  to find the substring representing
+    a frame against another item.
+
+    Examples:
+        >>> item = Item('mario01_v003.rgb')
+        >>> item.name
+        'mario01_v003.rgb'
+        >>> item.str_parts
+        ['mario', '_v', '.rgb']
+        >>> item.str_digits
+        ['01', '003']
     """
 
     def __init__(self, item: str):
@@ -45,6 +55,12 @@ class Item:
 
 
 class FileItem(Item):
+    """
+    A primitive class for representing a file sequence on disk
+
+    The purpose to be used  to find the substring representing
+    a frame against another item.
+    """
 
     def __init__(self, filepath: str):
 
