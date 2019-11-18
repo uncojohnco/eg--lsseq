@@ -64,9 +64,10 @@ class SequenceBuilder:
     Class to handle the collection of sequential sequence of items.
 
     >>> s = SequenceBuilder(Item('file.0001.jpg'))
-    >>> m =map(s.append, ['file.0002.jpg', 'file.0003.jpg'])
+    >>> s.append(Item('file.0002.jpg'))
+    >>> s.append(Item('file.0003.jpg'))
     >>> print(s.frames)
-    file.1-3.jpg
+    {1, 2, 3}
     """
     _is_sequence: bool
 
@@ -80,7 +81,7 @@ class SequenceBuilder:
 
         self._is_sequence = False
 
-        self._frames = set()  # TODO: change to frozenset for speed lookup
+        self._frames = set()
 
     def can_include(self, item: Item) -> bool:
         """
@@ -106,6 +107,7 @@ class SequenceBuilder:
 
     def _init_sequence(self, substr_match: SubstrMatch):
         """
+        Method to initialise this as a true sequence.
         """
 
         basename = self._base.name
@@ -115,7 +117,8 @@ class SequenceBuilder:
 
         pos1, pos2 = frame_pos.start, frame_pos.end
 
-        self._seq_str_parts = SequenceStrParts(
+        # This is used later for creating a Concrete Sequence
+        seq_str_parts = SequenceStrParts(
             prefix=basename[:pos1],
             suffix=basename[pos2:],
             pad_len=len(base_frame)
@@ -123,6 +126,7 @@ class SequenceBuilder:
 
         self._frames.add(int(base_frame))
 
+        self._seq_str_parts = seq_str_parts
         self._is_sequence = True
 
     def append(self, item: Item):
@@ -163,3 +167,12 @@ class SequenceBuilder:
         :return: List[int]
         """
         return self._frames
+
+    @property
+    def seq_str_parts(self) -> SequenceStrParts:
+        """
+
+        :return:
+        """
+
+        return self._seq_str_parts
