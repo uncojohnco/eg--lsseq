@@ -1,34 +1,28 @@
 import logging
 
-from typing import Tuple, Union
-from dataclasses import dataclass
+from typing import Optional
 
 from lss.const import DIGITS_RE
-
+from lss import SubstrMatch, SubstrPos
 
 log = logging.getLogger(__name__)
 
 
-@dataclass
-class SeqMatch:
-    start: int
-    end: int
-    frames: Tuple
-
-
-def diff_sequence(str1: str, str2: str, strict=True) -> Union[SeqMatch,None]:
-    """Diff between str1 and str2 to to resolve the frame representation
+def find_matching_frame_substrings(
+        str1: str, str2: str,
+        strict=True) -> Optional[SubstrMatch]:
+    """
+    Diff between str1 and str2 to to resolve the frame representation
     of each string.
 
-    Example:
-        >>> diff_sequence('file01_0040.rgb', 'file01_0041.rgb')
-        SeqMatch(start=7, end=11, frames=('0040', '0041'))
+    Examples:
+        >>> find_matching_frame_substrings('file01_0040.rgb', 'file01_0041.rgb')
+        SubstrMatch(pos=SubstrPos(start=7, end=11), groups=('0040', '0041'))
 
-        >>> diff_sequence('file1.03.rgb', 'file2.03.rgb')
-        SeqMatch(start=4, end=5, frames=('1', '2'))
+        >>> find_matching_frame_substrings('file1.03.rgb', 'file2.03.rgb')
+        SubstrMatch(pos=SubstrPos(start=4, end=5), groups=('1', '2'))
 
-        >>> diff_sequence('file02_0040.rgb', 'file01_0041.rgb')
-
+        >>> find_matching_frame_substrings('file02_0040.rgb', 'file01_0041.rgb')
 
     :param str1: The string object for comparison against.
     :param str2: The string to compare to the object string.
@@ -47,7 +41,7 @@ def diff_sequence(str1: str, str2: str, strict=True) -> Union[SeqMatch,None]:
     if len(matches1) != len(matches2):
         return None
 
-    diff_result = []
+    diff_results = []
 
     # Iterate through ordered pairs of digits found in each name
     for m1, m2 in zip(matches1, matches2):
@@ -70,16 +64,20 @@ def diff_sequence(str1: str, str2: str, strict=True) -> Union[SeqMatch,None]:
 
         # If we get to this point - we have found a digit string part
         # representing a sequence
-        seq_match = SeqMatch(
-            start=m1.start(), end=m1.end(),
-            frames=(digit_str1, digit_str2)
+        seq_match = SubstrMatch(
+            pos=SubstrPos(m1.start(), m1.end()),
+            groups=(digit_str1, digit_str2)
         )
-        diff_result.append(seq_match)
+        diff_results.append(seq_match)
 
-    # if more than one set of matches has been found
-    if not diff_result or len(diff_result) > 1:
+    log.debug(r'diff_results: {diff_results}')
+
+    # If more than one substring match is found, we consider this result to be 
+    # invalid for our purposes of finding the substring representing 
+    # a frame sequence
+    if not diff_results or len(diff_results) > 1:
         return None
 
-    log.debug(r'diff_result: {diff_result}')
+    substr_match = diff_results[0]
 
-    return diff_result[0]
+    return substr_match
