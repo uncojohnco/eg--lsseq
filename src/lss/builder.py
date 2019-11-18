@@ -65,20 +65,26 @@ class SequenceBuilder:
     >>> s = SequenceBuilder(Item('file.0001.jpg'))
     >>> s.append(Item('file.0002.jpg'))
     >>> s.append(Item('file.0003.jpg'))
-    >>> print(s.frames)
+    >>> s.is_sequence
+    True
+    >>> s.frames
     {1, 2, 3}
-    """
-    _base: Item
-    _items: List[Item]
 
-    _seq_str_parts: SequenceStrParts = None
-    _frames: Set[int] = set()
-    _is_sequence: bool = False
+    >>> s = SequenceBuilder(Item('mario01.0001.jpg'))
+    >>> s.is_sequence
+    False
+    >>> len(s.frames)
+    0
+    """
 
     def __init__(self, item: Item):
 
-        self._base = item
-        self._items = [item]
+        self._base: Item = item
+        self._items: List[Item] = [item]
+
+        self._seq_str_parts: SequenceStrParts = None
+        self._frames: Set[int] = set()
+        self._is_sequence: bool = False
 
     def can_include(self, item: Item) -> bool:
         """

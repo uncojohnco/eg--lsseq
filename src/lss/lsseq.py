@@ -1,37 +1,48 @@
 import os
 import pathlib
 
-from typing import Iterator, List, Iterable, Generator
+import logging
 
-from lss import FileItem, FileSequence
+from typing import Generator, Iterable, List, Sequence, Union
+
+import lss.util
+from lss import FileItem, FileSequence, SequenceStrParts
 from lss.builder import FileSequenceBuilder
 
 
-def build_sequences_form1(file_items: Iterator[FileItem]) -> List[FileSequenceBuilder]:
+log = logging.getLogger(__name__)
+
+LazyFileItems = Union[Sequence[str], Sequence[FileItem]]
+
+
+def build_sequences_form1(filepaths: str) -> List[FileSequenceBuilder]:
     """
     Process a list of files into
 
-    :param file_items: file items to be processed.
+    :param filepaths: file items to be processed.
     :return:
     """
 
     sequences_f1 = []
 
-    for file in file_items:
+    filepaths = sorted(filepaths)
 
-        item = FileItem(file)
+    for file in filepaths:
+
+        if not isinstance(file, FileItem):
+            file = FileItem(file)
 
         found = False
 
         for seq in sequences_f1:
-            if seq.can_include(item):
-                seq.append(item)
+            if seq.can_include(file):
+                seq.append(file)
 
                 found = True
                 break
 
         if not found:
-            seq = FileSequenceBuilder(item)
+            seq = FileSequenceBuilder(file)
             sequences_f1.append(seq)
 
     return sequences_f1
@@ -41,11 +52,21 @@ def build_sequences_concrete(sequences_f1: Iterable[FileSequenceBuilder]) -> Gen
 
     for seq_f1 in sequences_f1:
 
-        seq = FileSequence(
-            str_parts=seq_f1.seq_str_parts,
-            frames=seq_f1.ordered,
-            fileobj=seq_f1.fileobj,
-        )
+        if seq_f1.is_sequence:
+
+            seq = FileSequence(
+                str_parts=seq_f1.seq_str_parts,
+                fileobj=seq_f1.fileobj,
+                frames=seq_f1.ordered,
+            )
+        # This item is not part of a sequence
+        else:
+            # TODO: Refactor this so that we arent reliant on SequenceStrParts for a single file!
+            seq_str_parts = SequenceStrParts(seq_f1._base.basename, seq_f1._base.ext)
+            seq = FileSequence(
+                str_parts=seq_str_parts,
+                fileobj=seq_f1.fileobj,
+            )
 
         yield seq
 
@@ -63,9 +84,8 @@ def get_sequences(file_paths: Iterable[str]) -> Generator[FileSequence, None, No
     :return:
     """
 
-    file_items = map(FileItem, file_paths)
-    sequences_f1 = build_sequences_form1(file_items)
-    yield from build_sequences_concrete(sequences_f1)
+    sequences_f1 = build_sequences_form1(file_paths)
+    return list(build_sequences_concrete(sequences_f1))
 
 
 # TODO: add commandline formatter
@@ -95,9 +115,7 @@ def format_sequence(seq: FileSequence) -> str:
     if seq.is_sequence:
         count = len(seq.frames)
         bn = f'{s.prefix}{s.printf}{s.suffix}'
-
-        # TODO: implement compact frame format
-        comp_frames = seq.frames
+        comp_frames = lss.util.compact_frame_range(seq.frames)
 
         return f'{count} {bn} {comp_frames}'
 
@@ -111,26 +129,46 @@ def run(dir_path):
 
     """
     Examples:
+        >>> import os
+        >>> olddir = os.getcwd()
+        >>> targetdir = os.path.dirname(__file__)
+        >>> os.chdir(targetdir)
+
         >>> run('../../tests/files/simple1')
-        5 file01_%04d.rgb 40-42, 44, 45
+        5 file01_%04d.rgb 40-42 44-45
+
         >>> run('../../tests/files/ex1')
         1 elem.info
         46 sd_fx29.%04d.rgb 101-121 123-147
         1 strange.xml
+
+        # TODO: this test is failing...
+        >>> run('../../tests/files/broken_seq')
+        5 file01_%04d.rgb 40-42 44-45
+        5 file02_%d.rgb 0-4
+        4 file%d.03.rgb 1-4
+
+       >>> os.chdir(olddir)
 
     :param dir_path:
     :return:
     """
 
     dir_path = os.path.abspath(dir_path)
+    log.debug(f'dir path: "{dir_path}"')
 
     path = pathlib.Path(dir_path)
 
     filenames = map(str, path.iterdir())
 
-    sequences = get_sequences(filenames)
+    sequences = list(get_sequences(filenames))
+
+    log.debug(f'Sequences resolved: "{sequences}"')
+
+    lines = []
 
     for seq in sequences:
-
         output = format_sequence(seq)
-        print(output)
+        lines.append(output)
+
+    return '\n'.join(lines)
