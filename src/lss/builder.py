@@ -5,9 +5,7 @@ from typing import List, Optional, Set, Union
 
 import lss.util
 
-from lss import SubstrMatch
-from lss.dataclass.item import Item
-from lss.dataclass.sequence import SequenceStrParts
+from lss import SubstrMatch, Item, FileItem, SequenceStrParts, Fileobj
 from lss.error import SequenceError
 
 
@@ -73,6 +71,8 @@ class SequenceBuilder:
 
     _base: Item
     _items: List[Item]
+
+    _seq_str_parts: SequenceStrParts
 
     def __init__(self, item: Item):
 
@@ -171,8 +171,34 @@ class SequenceBuilder:
     @property
     def seq_str_parts(self) -> SequenceStrParts:
         """
-
+        # TODO:
         :return:
         """
 
         return self._seq_str_parts
+
+
+class FileSequenceBuilder(SequenceBuilder):
+
+    _fileobj: Fileobj
+    _base: FileItem
+
+    def _init_sequence(self, substr_match: SubstrMatch):
+
+        super(FileSequenceBuilder, self)._init_sequence(substr_match)
+
+        # TODO: Implement PurePath but with the generic sequence filename
+        #  i.e file01_####.rgb
+        self._fileobj = Fileobj(
+            dirname=self._base.dirname,
+            ext=self._base.ext
+        )
+
+    @property
+    def fileobj(self) -> Fileobj:
+        """
+        # TODO:
+        :return:
+        """
+
+        return self._fileobj

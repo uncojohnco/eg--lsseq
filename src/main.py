@@ -4,10 +4,7 @@ import os
 import sys
 import doctest
 
-from typing import List, Dict
-
-
-import lss.lss
+import lss.lsseq
 
 
 def main():
@@ -19,7 +16,8 @@ def main():
         arg = sys.argv[1]
     else:
         print('Usage:', __file__, '/path/to/dir')
-        sys.exit()
+
+    # TODO: implement optparse...
 
     if arg == '--test':
         # Test the module function using the inline example of the comments.
@@ -31,7 +29,7 @@ def main():
         arg = os.path.abspath(arg)
 
         if os.path.isdir(arg):
-            result = lss.lss.run(arg)
+            result = lss.lsseq.run(arg)
             print(result)
         else:
             print('Not a directory', arg)

@@ -1,13 +1,13 @@
+import os
 import pathlib
 
-from typing import Generator, Iterator, List
+from typing import Iterator, List, Iterable
 
-from lss.dataclass.item import FileItem
-from lss.dataclass.sequence import Sequence
-from lss.builder import SequenceBuilder
+from lss import FileItem, FileSequence
+from lss.builder import FileSequenceBuilder
 
 
-def build_sequences_form1(file_items: Iterator[FileItem]) -> List[SequenceBuilder]:
+def build_sequences_form1(file_items: Iterator[FileItem]) -> List[FileSequenceBuilder]:
     """
     Process a list of files into
 
@@ -31,25 +31,26 @@ def build_sequences_form1(file_items: Iterator[FileItem]) -> List[SequenceBuilde
                 break
 
         if not found:
-            seq = SequenceBuilder(item)
+            seq = FileSequenceBuilder(item)
             sequences_f1.append(seq)
 
     return sequences_f1
 
 
-def get_sequences(filenames: List[str]):
+def get_sequences(file_paths: Iterable[str]):
     """
     Process a list of filenames to be collected into their
 
     Examples:
         >>> files = ['f01.rgb', 'f02.rgb','f03.rgb',]
         >>> get_sequences(files)
+        [FileSequence(str_parts=SequenceStrParts(prefix='f', suffix='.rgb', pad_len=2, pad_char='#'), frames=(1, 2, 3), fileobj=Fileobj(dirname='.', ext='.rgb'))]
 
-    :param filenames:
+    :param file_paths:
     :return:
     """
 
-    file_items = map(FileItem, filenames)
+    file_items = map(FileItem, file_paths)
 
     sequences_f1 = build_sequences_form1(file_items)
 
@@ -58,9 +59,10 @@ def get_sequences(filenames: List[str]):
 
         ordered_frames = sorted(seq_f1.frames)
 
-        seq = Sequence(
+        seq = FileSequence(
             str_parts=seq_f1.seq_str_parts,
-            frames=tuple(ordered_frames)
+            frames=tuple(ordered_frames),
+            fileobj=seq_f1.fileobj
         )
 
         sequences.append(seq)
@@ -71,14 +73,16 @@ def get_sequences(filenames: List[str]):
 def run(dir_path):
 
     """
-    >>> run('./test-jc--dd-2019/tests/files/simple1')
+    >>> run('../../tests/files/simple1')
 
     :param dir_path:
     :return:
     """
 
+    dir_path = os.path.abspath(dir_path)
+
     path = pathlib.Path(dir_path)
 
-    filenames = path.iterdir()
+    filenames = map(str, path.iterdir())
 
     get_sequences(filenames)

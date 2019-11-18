@@ -5,10 +5,13 @@ import logging
 
 from typing import List
 
+import pathlib
+
 from lss.const import DIGITS_RE
 
 log = logging.getLogger(__name__)
 
+PurePath = pathlib.PurePath
 
 class Item:
     """
@@ -62,17 +65,23 @@ class FileItem(Item):
     a frame against another item.
     """
 
+    dirname: str
+    filename: str
+    path: pathlib.PurePath
+
     def __init__(self, filepath: str):
 
         # assumed the path has already been expanded...
-        self._path = filepath
-        self._dirname, self._filename = os.path.split(self._path)
+        p_ = PurePath(str(filepath))
+        self.dirname = str(p_.parent)
 
-        super(FileItem, self).__init__(self._filename)
+        self.filename = p_.name
+        self.basename = p_.stem
+        self.ext = p_.suffix
 
-    @property
-    def dirname(self) -> str:
-        return self._dirname
+        self.path = p_
+
+        super(FileItem, self).__init__(self.filename)
 
     def __repr__(self):
         n = self.name

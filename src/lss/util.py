@@ -3,7 +3,7 @@ import logging
 from typing import Optional
 
 from lss.const import DIGITS_RE
-from lss import SubstrMatch, SubstrPos
+from lss.dataclass.base import SubstrMatch, SubstrPos
 
 log = logging.getLogger(__name__)
 

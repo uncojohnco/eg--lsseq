@@ -13,3 +13,10 @@ class SubstrPos:
 class SubstrMatch:
     pos: SubstrPos
     groups: Tuple[str, str]
+
+
+@dataclass
+class Fileobj:
+
+    dirname: str
+    ext: str

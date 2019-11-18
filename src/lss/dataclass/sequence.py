@@ -4,6 +4,8 @@ from typing import List, Tuple
 
 from dataclasses import dataclass
 
+from lss.dataclass.base import Fileobj
+
 
 @dataclass
 class SequenceStrParts:
@@ -67,5 +69,4 @@ class Sequence:
 @dataclass
 class FileSequence(Sequence):
 
-    dirname: str
-    extension: str
+    fileobj: Fileobj
