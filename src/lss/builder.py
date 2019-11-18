@@ -5,8 +5,9 @@ from typing import List, Optional, Set, Union
 
 import lss.util
 
-from lss import SubstrMatch, SubstrPos
+from lss import SubstrMatch
 from lss.dataclass.item import Item
+from lss.dataclass.sequence import SequenceStrParts
 from lss.error import SequenceError
 
 
@@ -58,6 +59,18 @@ def find_matching_frame_substrings(
     return substr_match
 
 
+def create_seq_str_parts(basename, base_frame, frame_pos):
+
+    pos1, pos2 = frame_pos.start, frame_pos.end
+
+    SequenceStrParts(
+        prefix=basename[:pos1],,
+        frame_pos=frame_pos,
+        suffix=basename[pos2:],
+        pad=len(base_frame)
+    )
+
+
 class SequenceBuilder:
     """
     Class to handle the collection of sequential sequence of items.
@@ -71,10 +84,6 @@ class SequenceBuilder:
 
     _base: Item
     _items: List[Item]
-    _frames: Set[int]
-
-    _frame_pos: SubstrPos
-    _pad: int
 
     def __init__(self, item: Item):
 
@@ -93,6 +102,7 @@ class SequenceBuilder:
 
         :return: bool
         """
+
         substr_match = find_matching_frame_substrings(self._base, item)
         if not substr_match:
             return False
@@ -110,20 +120,9 @@ class SequenceBuilder:
         """
         """
 
-        self._frame_pos = substr_match.pos
-
-        s, e = self._frame_pos.start, self._frame_pos.end
-
-        prefix = self._base.name[:s]
-        sufix = self._base.name[e:]
-
-        bn = f'{prefix}####{sufix}'
-
-        self.base
-
         base_frame = substr_match.groups[0]
 
-        self._pad = len(base_frame)
+        self._seq_str_parts = create_seq_str_parts(self._base.name, base_frame, substr_match, )
 
         self._frames.add(int(base_frame))
 
