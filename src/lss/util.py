@@ -16,13 +16,14 @@ def find_matching_frame_substrings(
     of each string.
 
     Examples:
-        >>> find_matching_frame_substrings('file01_0040.rgb', 'file01_0041.rgb')
-        SubstrMatch(pos=SubstrPos(start=7, end=11), groups=('0040', '0041'))
-
-        >>> find_matching_frame_substrings('file1.03.rgb', 'file2.03.rgb')
-        SubstrMatch(pos=SubstrPos(start=4, end=5), groups=('1', '2'))
-
-        >>> find_matching_frame_substrings('file02_0040.rgb', 'file01_0041.rgb')
+        # >>> find_matching_frame_substrings('file01_0040.rgb', 'file01_0041.rgb')
+        # SubstrMatch(pos=SubstrPos(start=7, end=11), groups=('0040', '0041'))
+        # >>> find_matching_frame_substrings('file1.03.rgb', 'file2.03.rgb')
+        # SubstrMatch(pos=SubstrPos(start=4, end=5), groups=('1', '2'))
+        >>> bool(find_matching_frame_substrings('file01_0040.rgb', 'file02_1.rgb'))
+        False
+        >>> bool(find_matching_frame_substrings('file02_0040.rgb', 'file01_0041.rgb'))
+        False
 
     :param str1: The string object for comparison against.
     :param str2: The string to compare to the object string.
@@ -51,15 +52,11 @@ def find_matching_frame_substrings(
 
         # Skip if the pair of matching "digit strings" are equal,
         # hence this pair cant be representative of frame sequence
-        if digit_str1 == digit_str2:
+        if int(digit_str1) == int(digit_str2):
             continue
 
         # Ignore if the matches don't have the same start position
         if start1 != start2:
-            continue
-
-        # If strict is True, the length of the padding must be the same!
-        if strict is True and len(digit_str1) != len(digit_str2):
             continue
 
         # If we get to this point - we have found a digit string part
@@ -79,6 +76,10 @@ def find_matching_frame_substrings(
         return None
 
     substr_match = diff_results[0]
+
+    # If strict is True, the length of the padding must be the same!
+    if strict and (len(substr_match.groups[0]) != len(substr_match.groups[1])):
+        return None
 
     return substr_match
 

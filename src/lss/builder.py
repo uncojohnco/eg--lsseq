@@ -54,7 +54,8 @@ def find_matching_frame_substrings(
 
     name1, name2 = item1.name, item2.name
 
-    substr_match = lss.util.find_matching_frame_substrings(name1, name2, strict)
+    substr_match = lss.util.find_matching_frame_substrings(name1, name2)
+
     return substr_match
 
 
@@ -150,9 +151,6 @@ class SequenceBuilder:
         self._frames.add(int(substr_match.groups[1]))
         self._items.append(item)
 
-    def __str__(self):
-        return self._base.str_parts
-
     @property
     def items(self) -> List[Item]:
         """
@@ -190,6 +188,12 @@ class SequenceBuilder:
         """
 
         return self._is_sequence
+
+    def __str__(self):
+        return self._base.str_parts
+
+    def __repr__(self):
+        return f'{self._base.str_parts} {self.frames}'
 
 
 class FileSequenceBuilder(SequenceBuilder):

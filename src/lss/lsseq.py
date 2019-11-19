@@ -30,16 +30,13 @@ def build_sequences_form1(file_paths: Iterable[str]) -> List[FileSequenceBuilder
 
     sequences_f1 = []
 
-    file_paths = sorted(file_paths)
+    file_paths = list(map(FileItem, sorted(file_paths)))
 
     for file in file_paths:
 
-        if not isinstance(file, FileItem):
-            file = FileItem(file)
-
         found = False
 
-        for seq in sequences_f1:
+        for seq in sequences_f1[::-1]:
             if seq.can_include(file):
                 seq.append(file)
 
@@ -164,7 +161,7 @@ def run(dir_path):
         >>> os.chdir(olddir)
 
     :param dir_path:: The directory to get the children files to process into
-                      sequences. Doesn't support recursion of sub dirs...s
+                      sequences. Doesn't support recursion of sub dirs...
     """
 
     dir_path = os.path.abspath(dir_path)
