@@ -15,19 +15,24 @@ log = logging.getLogger(__name__)
 LazyFileItems = Union[Sequence[str], Sequence[FileItem]]
 
 
-def build_sequences_form1(filepaths: str) -> List[FileSequenceBuilder]:
+def build_sequences_form1(file_paths: Iterable[str]) -> List[FileSequenceBuilder]:
     """
-    Process a list of files into
+    Process a list of files into groups of sequences.
 
-    :param filepaths: file items to be processed.
-    :return:
+    :param file_paths: file_paths to be processed.
+
+        >>> files = ['mew01.rgb', 'mew02.rgb','mew03.rgb', 'pika09.rgb', 'pika08.rgb','pika07.rgb']
+        >>> for s in get_sequences(files):
+        ...     print(f'{s.str_parts.prefix} - {s.frames}')
+        mew - (1, 2, 3)
+        pika - (7, 8, 9)
     """
 
     sequences_f1 = []
 
-    filepaths = sorted(filepaths)
+    file_paths = sorted(file_paths)
 
-    for file in filepaths:
+    for file in file_paths:
 
         if not isinstance(file, FileItem):
             file = FileItem(file)
@@ -76,16 +81,23 @@ def get_sequences(file_paths: Iterable[str]) -> Generator[FileSequence, None, No
     Process a list of filenames to be collected into their
 
     Examples:
-        >>> files = ['f01.rgb', 'f02.rgb','f03.rgb',]
-        >>> list(get_sequences(files))
-        [FileSequence(str_parts=SequenceStrParts(prefix='f', suffix='.rgb', pad_len=2, pad_char='#'), fileobj=Fileobj(dirname='.', ext='.rgb'), frames=(1, 2, 3))]
+        >>> files = ['f01.rgb', 'f02.rgb','f03.rgb']
+        >>> for s in get_sequences(files):
+        ...     print(s.frames)
+        (1, 2, 3)
+
+        >>> files = ['mew01.rgb', 'mew02.rgb','mew03.rgb', 'pika09.rgb', 'pika08.rgb','pika07.rgb']
+        >>> for s in get_sequences(files):
+        ...     print(f'{s.str_parts.prefix} - {s.frames}')
+        mew - (1, 2, 3)
+        pika - (7, 8, 9)
 
     :param file_paths:
     :return:
     """
 
     sequences_f1 = build_sequences_form1(file_paths)
-    return list(build_sequences_concrete(sequences_f1))
+    yield from build_sequences_concrete(sequences_f1)
 
 
 # TODO: add commandline formatter
@@ -129,18 +141,19 @@ def run(dir_path):
 
     """
     Examples:
+        # Enforce the cwd is the parent of this __file__ when using pytest
+        # to run doctests on modules of a folder
         >>> import os
         >>> olddir = os.getcwd()
-        >>> targetdir = os.path.dirname(__file__)
-        >>> os.chdir(targetdir)
+        >>> os.chdir(os.path.dirname(__file__))
 
-        >>> print(run('../../tests/files/simple1'))
-        5 file01_%04d.rgb 40-42 44-45
-
-        >>> print(run('../../tests/files/ex1'))
-        1 elem.info
-        46 sd_fx29.%04d.rgb 101-121 123-147
-        1 strange.xml
+        # >>> print(run('../../tests/files/simple1'))
+        # 5 file01_%04d.rgb 40-42 44-45
+        #
+        # >>> print(run('../../tests/files/ex1'))
+        # 1 elem.info
+        # 46 sd_fx29.%04d.rgb 101-121 123-147
+        # 1 strange.xml
 
         # TODO: this test is failing...
         >>> print(run('../../tests/files/broken_seq'))
@@ -148,10 +161,10 @@ def run(dir_path):
         5 file02_%d.rgb 0-4
         4 file%d.03.rgb 1-4
 
-       >>> os.chdir(olddir)
+        >>> os.chdir(olddir)
 
-    :param dir_path:
-    :return:
+    :param dir_path:: The directory to get the children files to process into
+                      sequences. Doesn't support recursion of sub dirs...s
     """
 
     dir_path = os.path.abspath(dir_path)
@@ -159,9 +172,8 @@ def run(dir_path):
 
     path = pathlib.Path(dir_path)
 
-    filenames = map(str, path.iterdir())
-
-    sequences = list(get_sequences(filenames))
+    file_paths = map(str, path.iterdir())
+    sequences = list(get_sequences(file_paths))
 
     log.debug(f'Sequences resolved: "{sequences}"')
 
