@@ -97,7 +97,6 @@ def get_sequences(file_paths: Iterable[str]) -> Generator[FileSequence, None, No
     yield from build_sequences_concrete(sequences_f1)
 
 
-# TODO: add commandline formatter
 def format_sequence(seq: FileSequence) -> str:
     """
     Examples:
