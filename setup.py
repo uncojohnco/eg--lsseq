@@ -4,7 +4,7 @@ import setuptools
 
 here = os.path.abspath(os.path.dirname(__file__))
 
-with open(os.path.join(here, "src/lss/__version__.py")) as version_file:
+with open(os.path.join(here, "__version__.py")) as version_file:
     exec(version_file.read())
 
 # Get the long description from the README file
