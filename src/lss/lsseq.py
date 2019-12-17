@@ -15,19 +15,19 @@ log = logging.getLogger(__name__)
 LazyFileItems = Union[Sequence[str], Sequence[FileItem]]
 
 
-def build_sequences_form1(filepaths: str) -> List[FileSequenceBuilder]:
+def build_sequences_form1(file_paths:  Iterable[str]) -> List[FileSequenceBuilder]:
     """
     Process a list of files into
 
-    :param filepaths: file items to be processed.
+    :param file_paths: file items to be processed.
     :return:
     """
 
     sequences_f1 = []
 
-    filepaths = sorted(filepaths)
+    file_paths = sorted(file_paths)
 
-    for file in filepaths:
+    for file in file_paths:
 
         if not isinstance(file, FileItem):
             file = FileItem(file)
@@ -85,7 +85,7 @@ def get_sequences(file_paths: Iterable[str]) -> Generator[FileSequence, None, No
     """
 
     sequences_f1 = build_sequences_form1(file_paths)
-    return list(build_sequences_concrete(sequences_f1))
+    return list(build_sequences_concrete(sequences_f1))  # TODO:
 
 
 # TODO: add commandline formatter
