@@ -1,6 +1,9 @@
 name: Doctest
 
-on: [push]
+on:
+  push:
+    paths:
+      - 'src/lss/**'
 
 jobs:
   build:
