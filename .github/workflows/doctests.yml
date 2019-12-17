@@ -25,4 +25,4 @@ jobs:
         pip install -r requirements-tests-doctests.txt
     - name: Test with pytest
       run: |
-        pytest --doctest-modules
+        pytest --doctest-modules --ignore=notebooks
