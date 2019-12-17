@@ -1,1 +1,1 @@
-collect_ignore = ["setup.py", "src/main.py", "notebooks"]
+collect_ignore = ["setup.py", "src/main.py"]
