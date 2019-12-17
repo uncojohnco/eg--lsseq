@@ -26,7 +26,7 @@ setuptools.setup(
     long_description=long_description,
     long_description_content_type="text/markdown",
 
-    url="https://github.com/uncojohnco/test-jc--dd-2019/",  # TODO: rename to "example-lsseq"
+    url="https://github.com/uncojohnco/eg--lsseq/",
 
     package_dir={'': 'src'},
     packages=setuptools.find_packages('src'),
