@@ -1,6 +1,6 @@
 
 
-from typing import List, Tuple
+from typing import Tuple
 
 from dataclasses import dataclass
 
@@ -59,9 +59,9 @@ class SequenceStrParts:
             return f'%0{self.pad_len}d'
 
 
-# TODO: Sequence behavior should be split into separate class, however,
-# with dataclass inheritance would get `TypeError: non-default argument 'fileobj' follows default argument`
-# https://stackoverflow.com/questions/51575931/class-inheritance-in-python-3-7-dataclasses
+# TODO: Sequence behavior should be split into separate class, however, with dataclass inheritance,
+#  would get `TypeError: non-default argument 'fileobj' follows default argument`
+#  https://stackoverflow.com/questions/51575931/class-inheritance-in-python-3-7-dataclasses
 
 # TODO: should be able to instantiate this class with a string...
 @dataclass
@@ -87,3 +87,5 @@ class FileSequence:
     @property
     def is_sequence(self) -> bool:
         return len(self.frames) > 1
+
+    # TODO: Add wrapper properties: prefix, suffix - str_parts.prefix etc
