@@ -17,7 +17,7 @@ descript = ('A personal project for implementing behaviour akin to`ls` in '
 
 setuptools.setup(
     name="lsseq-jc",
-    version=__version__,  # noqa: E731
+    version=__version__,  # noqa: F821
 
     author="Johnny Cochrane",
     author_email="johnny.p.cochrane@gmail.com",
