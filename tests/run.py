@@ -3,7 +3,6 @@
 import os
 import sys
 import unittest
-import doctest
 
 if __name__ == '__main__':
 
