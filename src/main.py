@@ -2,7 +2,6 @@
 
 import os
 import sys
-import doctest
 
 import lss.lsseq
 
@@ -32,5 +31,6 @@ def main():
             print(result)
         else:
             print('Not a directory', dir_path)
+
 
 sys.exit(main())

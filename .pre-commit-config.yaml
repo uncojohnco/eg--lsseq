@@ -1,0 +1,13 @@
+
+  -   repo: https://github.com/pre-commit/pre-commit-hooks
+      rev: v2.4.0  # Use the ref you want to point at
+      hooks:
+        - id: double-quote-string-fixer
+        - id: end-of-file-fixer
+        - id: trailing-whitespace
+        - id: flake8
+#  -   repo: https://github.com/ambv/black
+#      rev: stable
+#      hooks:
+#        - id: black
+#          language_version: python3.6

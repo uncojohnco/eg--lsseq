@@ -48,7 +48,7 @@ def build_sequences_form1(filepaths: str) -> List[FileSequenceBuilder]:
     return sequences_f1
 
 
-def build_sequences_concrete(sequences_f1: Iterable[FileSequenceBuilder]) -> Generator[FileSequenceBuilder, None, None]:
+def build_sequences_concrete(sequences_f1: Iterable[FileSequenceBuilder]) -> Generator[FileSequenceBuilder, None, None]:  # noqa: E501
 
     for seq_f1 in sequences_f1:
 
@@ -76,9 +76,16 @@ def get_sequences(file_paths: Iterable[str]) -> Generator[FileSequence, None, No
     Process a list of filenames to be collected into their
 
     Examples:
-        >>> files = ['f01.rgb', 'f02.rgb','f03.rgb',]
-        >>> list(get_sequences(files))
-        [FileSequence(str_parts=SequenceStrParts(prefix='f', suffix='.rgb', pad_len=2, pad_char='#'), fileobj=Fileobj(dirname='.', ext='.rgb'), frames=(1, 2, 3))]
+        >>> files = ['file01.rgb', 'file02.rgb','file03.rgb',]
+        >>> seq = list(get_sequences(files))
+        >>> len(seq)
+        1
+        >>> seq[0].frames
+        (1, 2, 3)
+        >>> print(seq[0].str_parts.prefix)
+        file
+        >>> print(seq[0].str_parts.suffix)
+        .rgb
 
     :param file_paths:
     :return:

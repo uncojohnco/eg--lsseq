@@ -72,8 +72,8 @@ def find_matching_frame_substrings(
 
     log.debug(r'diff_results: {diff_results}')
 
-    # If more than one substring match is found, we consider this result to be 
-    # invalid for our purposes of finding the substring representing 
+    # If more than one substring match is found, we consider this result to be
+    # invalid for our purposes of finding the substring representing
     # a frame sequence
     if not diff_results or len(diff_results) > 1:
         return None
