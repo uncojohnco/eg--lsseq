@@ -1,0 +1,7 @@
+flake8
+pydevd_pycharm
+pytest
+pytest-cov
+pytest-mock
+# pytest-ordering
+pytest_reorder
