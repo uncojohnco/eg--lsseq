@@ -1,0 +1,14 @@
+#!/usr/bin/env python3
+
+from pathlib import Path
+import runpy
+
+root = Path(__file__).parent.parent
+filepath = str(root.joinpath('src/main.py'))
+
+
+# import pydevd_pycharm
+# pydevd_pycharm.settrace('localhost', port=40129, stdoutToServer=True, stderrToServer=True)
+
+
+runpy.run_path(filepath, run_name='__main__')
