@@ -1,3 +1,0 @@
-pytest
-
-ipython==7.9.0
