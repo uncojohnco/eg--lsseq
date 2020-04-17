@@ -1,0 +1,7 @@
+-r test.txt
+# black
+ipython
+jupyter
+pip-tools
+pre-commit
+pydevd_pycharm
