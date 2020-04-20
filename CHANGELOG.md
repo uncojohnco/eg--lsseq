@@ -13,7 +13,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 <!-- CHANGE TEMPLATE - BEGIN --
 
-## [0.0.0](https://github.com/uncojohnco/eg--lsseq/{{NNN}})
+## [0.0.0](https://github.com/uncojohnco/eg--lsseq/releases/tag/v{{RELEASE}})
 **2020-MM-DD (Unreleased)**
 
 
@@ -40,3 +40,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 --------------------------------------------------------------------------------
 <!-- CHANGE LOGS BELOW THIS LINE -->
 --------------------------------------------------------------------------------
+
+
+## [0.0.0](https://github.com/uncojohnco/eg--lsseq/releases/tag/v0.0.0)
+**2019-11-19**
+
+
+Initial working version
+
+
+<!-- END CHANGE [0.0.0] -->
