@@ -73,7 +73,7 @@ def build_sequences_concrete(sequences_f1: Iterable[FileSequenceBuilder]) -> Gen
 
 def get_sequences(file_paths: Iterable[str]) -> Generator[FileSequence, None, None]:
     """
-    Process a list of filenames to be collected into their
+    Process a list of filenames to be collected into their classified sequence
 
     Examples:
         >>> files = ['f01.rgb', 'f02.rgb','f03.rgb',]
@@ -85,7 +85,7 @@ def get_sequences(file_paths: Iterable[str]) -> Generator[FileSequence, None, No
     """
 
     sequences_f1 = build_sequences_form1(file_paths)
-    return list(build_sequences_concrete(sequences_f1))
+    return build_sequences_concrete(sequences_f1)
 
 
 # TODO: add commandline formatter
@@ -98,7 +98,7 @@ def format_sequence(seq: FileSequence) -> str:
         >>> fo = Fileobj('root', '.ext')
 
         >>> str_parts = SequenceStrParts('mario01_', '.ext',  4)
-        >>> mario = FileSequence(str_parts, Fileobj('root', '.ext'), frames=(1, 2, 3))
+        >>> mario = FileSequence(str_parts, fo, frames=(1, 2, 3))
         >>> format_sequence(mario)
         '3 mario01_%04d.ext 1-3'
 
@@ -125,8 +125,7 @@ def format_sequence(seq: FileSequence) -> str:
         return f'1 {bn}{s.suffix}'
 
 
-def run(dir_path):
-
+def run(dir_path) -> str:
     """
     Examples:
         >>> import os

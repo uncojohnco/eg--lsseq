@@ -22,7 +22,8 @@ def find_matching_frame_substrings(
         >>> find_matching_frame_substrings('file1.03.rgb', 'file2.03.rgb')
         SubstrMatch(pos=SubstrPos(start=4, end=5), groups=('1', '2'))
 
-        >>> find_matching_frame_substrings('file02_0040.rgb', 'file01_0041.rgb')
+        >>> bool(find_matching_frame_substrings('file02_0040.rgb', 'file01_0041.rgb'))
+        False
 
     :param str1: The string object for comparison against.
     :param str2: The string to compare to the object string.
@@ -51,7 +52,7 @@ def find_matching_frame_substrings(
 
         # Skip if the pair of matching "digit strings" are equal,
         # hence this pair cant be representative of frame sequence
-        if digit_str1 == digit_str2:
+        if int(digit_str1) == int(digit_str2):
             continue
 
         # Ignore if the matches don't have the same start position
