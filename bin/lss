@@ -4,7 +4,7 @@ from pathlib import Path
 import runpy
 
 root = Path(__file__).parent.parent
-filepath = str(root.joinpath('src/main.py'))
+filepath = str(root.joinpath('src/lss_cli.py'))
 
 
 # import pydevd_pycharm

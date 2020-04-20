@@ -2,13 +2,13 @@
 import os
 import setuptools
 
-here = os.path.abspath(os.path.dirname(__file__))
+_here = os.path.abspath(os.path.dirname(__file__))
 
-with open(os.path.join(here, "__version__.py")) as version_file:
-    exec(version_file.read())
+with open(os.path.join(_here, "__version__.py")) as version_file:
+    version = version_file.read().strip()
 
 # Get the long description from the README file
-with open(os.path.join(here, 'README.md'), encoding='utf-8') as f:
+with open(os.path.join(_here, 'README.md'), encoding='utf-8') as f:
     long_description = f.read()
 
 descript = ('A personal project for implementing behaviour akin to`ls` in '
@@ -17,7 +17,7 @@ descript = ('A personal project for implementing behaviour akin to`ls` in '
 
 setuptools.setup(
     name="lsseq-jc",
-    version=__version__,  # noqa: E731
+    version=version,
 
     author="Johnny Cochrane",
     author_email="johnny.p.cochrane@gmail.com",
@@ -40,5 +40,7 @@ setuptools.setup(
     python_requires='>=3.8',
 
     test_suite="test.run",
+
+    scripts=['bin/lss']
 
 )

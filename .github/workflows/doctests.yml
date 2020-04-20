@@ -28,4 +28,4 @@ jobs:
         pip install -r requirements-tests-doctests.txt
     - name: Run Doctests (temp - ignore )
       run: |
-        pytest --doctest-modules --ignore=notebooks  --ignore=src/lss/lsseq.py
+        pytest src/lss --doctest-modules --ignore=notebooks  --ignore=src/lss/lsseq.py
