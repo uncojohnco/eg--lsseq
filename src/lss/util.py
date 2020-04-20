@@ -22,7 +22,7 @@ def find_matching_frame_substrings(
         >>> find_matching_frame_substrings('file1.03.rgb', 'file2.03.rgb')
         SubstrMatch(pos=SubstrPos(start=4, end=5), groups=('1', '2'))
 
-        >>> find_matching_frame_substrings('file02_0040.rgb', 'file01_0041.rgb')
+        >>> find_matching_frame_substrings('fileXXX_0040.rgb', 'fileYYY_0041.rgb')  # non matching -return None
 
     :param str1: The string object for comparison against.
     :param str2: The string to compare to the object string.
