@@ -85,7 +85,7 @@ def get_sequences(file_paths: Iterable[str]) -> Generator[FileSequence, None, No
     """
 
     sequences_f1 = build_sequences_form1(file_paths)
-    return list(build_sequences_concrete(sequences_f1))
+    return build_sequences_concrete(sequences_f1)
 
 
 # TODO: add commandline formatter
@@ -125,8 +125,7 @@ def format_sequence(seq: FileSequence) -> str:
         return f'1 {bn}{s.suffix}'
 
 
-def run(dir_path):
-
+def run(dir_path) -> str:
     """
     Examples:
         >>> import os
