@@ -41,4 +41,6 @@ setuptools.setup(
 
     test_suite="test.run",
 
+    scripts=['bin/lss']
+
 )
