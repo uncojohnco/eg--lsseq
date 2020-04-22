@@ -1,11 +1,11 @@
 ## Setup
 
 ```bash
-git clone https://github.com/uncojohnco/test-jc--dd-2019 lss-jc
-cd lss-jc
-chmod +x ./lss
+git clone https://github.com/uncojohnco/test-jc--dd-2019 lss-jc && \
+cd lss-jc && \
+python -m venv env-lss && \
+source env-lss/bin/activate
 
-alias lss=$PWD/lss
 
 # Example usage
 lss ./tests/files/ex1
