@@ -2,13 +2,32 @@
 import os
 import setuptools
 
-here = os.path.abspath(os.path.dirname(__file__))
+_here = os.path.abspath(os.path.dirname(__file__))
 
-with open(os.path.join(here, "src/lss/__version__.py")) as version_file:
-    exec(version_file.read())
+
+def _get_version():
+
+    import re
+
+    version_file = os.path.join(_here, "src", "lss", "__version__.py")
+
+    main_ns = {}
+
+    with open(version_file) as vf:
+        exec(vf.read(), main_ns)
+        version = main_ns['__version__']
+
+    if not version:
+        raise RuntimeError("Unable to find version string in %s." % (version_file,))
+
+    return version
+
+
+_version = _get_version()
+
 
 # Get the long description from the README file
-with open(os.path.join(here, 'README.md'), encoding='utf-8') as f:
+with open(os.path.join(_here, 'README.md'), encoding='utf-8') as f:
     long_description = f.read()
 
 descript = ('A personal project for implementing behaviour akin to`ls` in '
@@ -17,7 +36,7 @@ descript = ('A personal project for implementing behaviour akin to`ls` in '
 
 setuptools.setup(
     name="lsseq-jc",
-    version=__version__,  # noqa: E731
+    version=_version,
 
     author="Johnny Cochrane",
     author_email="johnny.p.cochrane@gmail.com",
@@ -38,8 +57,6 @@ setuptools.setup(
     ],
 
     python_requires='>=3.8',
-
-    test_suite="test.run",
 
     scripts=['bin/lss']
 
