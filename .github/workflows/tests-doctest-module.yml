@@ -23,7 +23,8 @@ jobs:
     - name: Install dependencies
       run: |
         python -m pip install --upgrade pip
+        python -m pip install tox
 
-    - name: Run Doctests (temp - ignore )
+    - name: Run Doctests
       run: |
         tox -e doctest-modules
