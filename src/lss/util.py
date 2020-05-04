@@ -2,6 +2,9 @@ import logging
 
 from typing import Optional, Sequence
 
+from itertools import groupby
+from operator import itemgetter
+
 from lss.const import DIGITS_RE
 from lss.dataclass.base import SubstrMatch, SubstrPos
 
@@ -84,27 +87,39 @@ def find_matching_frame_substrings(
     return substr_match
 
 
-# Stolen from https://github.com/mohsen3/lss
-# TODO: replace with own implementation!
+# https://docs.python.org/2.6/library/itertools.html#examples
+# notebooks/proto/split_list_sequential_numbers.ipynb
 def compact_frame_range(frames: Sequence[int]):
     """Converts a list of numbers into the compact representation of the numbers.
-    >>> compact_frame_range([1, 2, 3, 4])
-    '1-4'
-    >>> compact_frame_range([1, 2, 5, 3])
-    '1-3 5'
-    >>> compact_frame_range([1, 2, 5, 7, 8, 9])
-    '1-2 5 7-9'
+
+    Examples:
+        >>> compact_frame_range([1, 2, 3, 4])
+        '1-4'
+        >>> compact_frame_range([1, 2, 5, 3])
+        '1-3 5'
+        >>> compact_frame_range([1, 2, 5, 7, 8, 9])
+        '1-2 5 7-9'
+        >>> compact_frame_range([1, 4,5,6, 10, 15,16,17,18, 22, 25,26,27,28])
+        '1 4-6 10 15-18 22 25-28'
     """
 
     nums = sorted(frames)
 
     formatted = []
-    i = 0
-    while i < len(frames):
-        count = 0
-        while i + count < len(nums) and nums[i] + count == nums[i + count]:
-            count = count + 1
-        formatted.append(str(nums[i]) + ('' if count == 1 else '-' + str(nums[i] + count - 1)))
-        i = i + count
+
+    # For each number, find it's "offset" i.e it's value minus it's index.
+    # Numbers of the same offset are a consecutive sequence.
+    for k, g in groupby(enumerate(nums), lambda x: x[1] - x[0]):
+        group = list(map(itemgetter(1), g))
+        start, end = group[0], group[-1]
+
+        # Single frame
+        if len(group) <= 1:
+            num_str = str(start)
+        # Sequence of frames
+        else:
+            num_str = f'{start}-{end}'
+
+        formatted.append(num_str)
 
     return ' '.join(formatted)
