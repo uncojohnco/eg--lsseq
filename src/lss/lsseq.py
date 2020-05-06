@@ -32,16 +32,16 @@ def build_sequences_form1(filepaths: str) -> List[FileSequenceBuilder]:
         if not isinstance(file, FileItem):
             file = FileItem(file)
 
-        found = False
-
+        # check if this file is a sibling of an existing `FileSequence` and
+        # append if True
         for seq in sequences_f1:
             if seq.can_include(file):
                 seq.append(file)
 
-                found = True
                 break
-
-        if not found:
+        # otherwise, this has been encountered for the first time
+        # and is a potential FileSequence
+        else:
             seq = FileSequenceBuilder(file)
             sequences_f1.append(seq)
 
