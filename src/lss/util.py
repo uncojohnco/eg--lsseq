@@ -28,10 +28,10 @@ def find_matching_frame_substrings(
         >>> bool(find_matching_frame_substrings('file02_0040.rgb', 'file01_0041.rgb'))
         False
 
-    :param str1: The string object for comparison against.
-    :param str2: The string to compare to the object string.
-    :param strict: If True, the length of the digit padding
-                    must be the same when comparing
+    :param str1: String to compare with str2.
+    :param str2: String to compare with str1.
+    :param strict: If True, the length of the digits representing the frame
+                   from both input strings must be the same.
 
     :return: List of SeqMatch
 
@@ -77,7 +77,7 @@ def find_matching_frame_substrings(
     log.debug(r'diff_results: {diff_results}')
 
     # If more than one substring match is found, we consider this result to be 
-    # invalid for our purposes of finding the substring representing 
+    # invalid for our purposes of finding the substring representing
     # a frame sequence
     if not diff_results or len(diff_results) > 1:
         return None

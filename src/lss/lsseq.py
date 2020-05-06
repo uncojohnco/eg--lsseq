@@ -17,7 +17,7 @@ LazyFileItems = Union[Sequence[str], Sequence[FileItem]]
 
 def build_sequences_form1(filepaths: str) -> List[FileSequenceBuilder]:
     """
-    Process a list of files into
+    Process a list of files into groups of sequences.
 
     :param filepaths: file items to be processed.
     :return:
@@ -141,7 +141,6 @@ def run(dir_path) -> str:
         46 sd_fx29.%04d.rgb 101-121 123-147
         1 strange.xml
 
-        # TODO: this test is failing...
         >>> print(run('../../tests/files/broken_seq'))
         5 file01_%04d.rgb 40-42 44-45
         5 file02_%d.rgb 0-4
