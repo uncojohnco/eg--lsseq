@@ -28,4 +28,4 @@ jobs:
 
     - name: Run Doctests
       run: |
-        tox -e doctest-modules
+        make tests-doctest-modules
