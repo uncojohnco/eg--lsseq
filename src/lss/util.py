@@ -84,6 +84,17 @@ def find_matching_frame_substrings(
 
     substr_match = diff_results[0]
 
+    # Confirm that the prefix and suffix of both strings match using the characters
+    # start and end positions as a separator
+    frame_pos = substr_match.pos
+    pos1, pos2 = frame_pos.start, frame_pos.end
+
+    prefix1, suffix1 = str1[:pos1], str1[pos2:]
+    prefix2, suffix2 = str2[:pos1], str2[pos2:]
+
+    if prefix1 != prefix2 or suffix1 != suffix2:
+        return None
+
     return substr_match
 
 

@@ -97,21 +97,6 @@ class SequenceBuilder:
         if not substr_match:
             return False
 
-        # Check the "prefix" and "suffix" of the "item" matches this sequence
-        basename = item.name
-
-        frame_pos = substr_match.pos
-        pos1, pos2 = frame_pos.start, frame_pos.end
-        prefix, suffix = basename[:pos1], basename[pos2:]
-
-        ssp = self._seq_str_parts
-
-        if not ssp.prefix == prefix:
-            return False
-
-        if not ssp.suffix == suffix:
-            return False
-
         # Dont include if the matched frame of the other item
         # already exists in this sequence frame set.
         frame = substr_match.groups[1]
