@@ -5,3 +5,5 @@ jupyter
 pip-tools
 pre-commit
 pydevd_pycharm
+tox
+tox-pip-extensions

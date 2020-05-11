@@ -6,7 +6,7 @@ help: ## This help
 
 
 install-dev: ## install pip requirements for `dev` env
-	pip install -r requirements/dev.txt
+	pip-sync requirements/dev.txt
 
 lint: ## run flake8 linter
 	tox -e flake8
