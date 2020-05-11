@@ -1,4 +1,4 @@
-.PHONY: help
+.PHONY: help tests
 
 help: ## This help
 	@echo "Makefile for lss:\n"
@@ -11,9 +11,19 @@ install-dev: ## install pip requirements for `dev` env
 lint: ## run flake8 linter
 	tox -e flake8
 
-test-all: ## run tests
+
+tests: ## run tests
 	tox
+
+
+tests-doctest-modules: ## run tests - docmodules
 	tox -e doctest-modules
+
+
+tests-all: tests ## run tests - all
+	$(MAKE) tests
+	$(MAKE) tests-docmodules
+
 
 requirements-clean-all: ## clean compiled `requirements` and recompile
 	$(MAKE) -C requirements clean all
