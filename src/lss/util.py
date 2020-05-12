@@ -2,6 +2,9 @@ import logging
 
 from typing import Optional, Sequence
 
+from itertools import groupby
+from operator import itemgetter
+
 from lss.const import DIGITS_RE
 from lss.dataclass.base import SubstrMatch, SubstrPos
 
@@ -25,10 +28,10 @@ def find_matching_frame_substrings(
         >>> bool(find_matching_frame_substrings('file02_0040.rgb', 'file01_0041.rgb'))
         False
 
-    :param str1: The string object for comparison against.
-    :param str2: The string to compare to the object string.
-    :param strict: If True, the length of the digit padding
-                    must be the same when comparing
+    :param str1: String to compare with str2.
+    :param str2: String to compare with str1.
+    :param strict: If True, the length of the digits representing the frame
+                   from both input strings must be the same.
 
     :return: List of SeqMatch
 
@@ -74,37 +77,60 @@ def find_matching_frame_substrings(
     log.debug(r'diff_results: {diff_results}')
 
     # If more than one substring match is found, we consider this result to be 
-    # invalid for our purposes of finding the substring representing 
+    # invalid for our purposes of finding the substring representing
     # a frame sequence
     if not diff_results or len(diff_results) > 1:
         return None
 
     substr_match = diff_results[0]
 
+    # Confirm that the prefix and suffix of both strings match using the characters
+    # start and end positions as a separator
+    frame_pos = substr_match.pos
+    pos1, pos2 = frame_pos.start, frame_pos.end
+
+    prefix1, suffix1 = str1[:pos1], str1[pos2:]
+    prefix2, suffix2 = str2[:pos1], str2[pos2:]
+
+    if prefix1 != prefix2 or suffix1 != suffix2:
+        return None
+
     return substr_match
 
 
-# Stolen from https://github.com/mohsen3/lss
-# TODO: replace with own implementation!
+# https://docs.python.org/2.6/library/itertools.html#examples
+# notebooks/proto/split_list_sequential_numbers.ipynb
 def compact_frame_range(frames: Sequence[int]):
     """Converts a list of numbers into the compact representation of the numbers.
-    >>> compact_frame_range([1, 2, 3, 4])
-    '1-4'
-    >>> compact_frame_range([1, 2, 5, 3])
-    '1-3 5'
-    >>> compact_frame_range([1, 2, 5, 7, 8, 9])
-    '1-2 5 7-9'
+
+    Examples:
+        >>> compact_frame_range([1, 2, 3, 4])
+        '1-4'
+        >>> compact_frame_range([1, 2, 5, 3])
+        '1-3 5'
+        >>> compact_frame_range([1, 2, 5, 7, 8, 9])
+        '1-2 5 7-9'
+        >>> compact_frame_range([1, 4,5,6, 10, 15,16,17,18, 22, 25,26,27,28])
+        '1 4-6 10 15-18 22 25-28'
     """
 
     nums = sorted(frames)
 
     formatted = []
-    i = 0
-    while i < len(frames):
-        count = 0
-        while i + count < len(nums) and nums[i] + count == nums[i + count]:
-            count = count + 1
-        formatted.append(str(nums[i]) + ('' if count == 1 else '-' + str(nums[i] + count - 1)))
-        i = i + count
+
+    # For each number, find it's "offset" i.e it's value minus it's index.
+    # Numbers of the same offset are a consecutive sequence.
+    for k, g in groupby(enumerate(nums), lambda x: x[1] - x[0]):
+        group = list(map(itemgetter(1), g))
+        start, end = group[0], group[-1]
+
+        # Single frame
+        if len(group) <= 1:
+            num_str = str(start)
+        # Sequence of frames
+        else:
+            num_str = f'{start}-{end}'
+
+        formatted.append(num_str)
 
     return ' '.join(formatted)

@@ -97,10 +97,10 @@ class SequenceBuilder:
         if not substr_match:
             return False
 
-        frame = substr_match.groups[1]
-
         # Dont include if the matched frame of the other item
         # already exists in this sequence frame set.
+        frame = substr_match.groups[1]
+
         if frame in self._frames:
             return False
 
@@ -115,7 +115,6 @@ class SequenceBuilder:
         base_frame = substr_match.groups[0]
 
         frame_pos = substr_match.pos
-
         pos1, pos2 = frame_pos.start, frame_pos.end
 
         # This is used later for creating a Concrete Sequence
