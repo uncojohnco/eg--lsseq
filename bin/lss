@@ -1,10 +1,18 @@
 #!/usr/bin/env python3
 
 from pathlib import Path
+import site
 import runpy
 
-root = Path(__file__).parent.parent
-filepath = str(root.joinpath('src/lss/lss_cli.py'))
+# TODO: Have this behaviour work  with both - vanilla "pip install" and with --editable
+
+# Works with "pip install --editable ."
+# root = Path(__file__).parent.parent
+# filepath = str(root.joinpath('src/lss/lss_cli.py'))
+
+# Works with "pip install ."
+root = Path(site.getsitepackages()[0])  # TODO: This should be more robust...
+filepath = str(root.joinpath('lss/lss_cli.py'))
 
 
 # import pydevd_pycharm
