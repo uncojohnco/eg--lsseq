@@ -3,7 +3,7 @@
 ### Linux 
 ```bash
 # Requires python 3.8
-git clone https://github.com/uncojohnco/test-jc--dd-2019 lsseq-jc && \
+git clone https://github.com/uncojohnco/eg--lsseq && \
 cd lsseq-jc  && \
 python -m venv venv-lss && \
 source ./venv-lss/bin/activate && \
